@@ -1,5 +1,5 @@
 Player = game.Players:WaitForChild("bob371")
-Character = game.Workspace:WaitForChild("bob371")
+Character = game.Workspace:WaitForChild("bob371") --Character = Player.Character --[err: return nil?]
 script.Parent = Character
 
 wait(2)
@@ -117,10 +117,10 @@ end
 
 
 function buildPoi(arm)
-	local _poi = Model('Poi', parent)
+	local _poi = Model('Poi', arm)
 	
 	local _knob = Part('Knob', 'Medium stone grey', 'Plastic', 0.4, 0.4, 0.4, _poi) 
-	local _handle = Weld(characterPiece, _knob, CfrAng(0,-1.5,0,0,0,0))
+	local _handle = Weld(arm, _knob, CfrAng(0,-1.5,0,0,0,0))
 	
 	local _ropeA = Part('Rope Top', 'Medium stone grey', 'Plastic', 0.2, 0.4, 0.2, _poi)
 	local _knobToRopeA = Weld(_knob, _ropeA, CfrAng(0,-0.4,0, 0,0,0))
