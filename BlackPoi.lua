@@ -1,5 +1,5 @@
 Player = game.Players:WaitForChild("bob371")
-Character = game.Workspace:WaitForChild("bob371") --Character = Player.Character --[err: return nil?]
+Character = game.Workspace:WaitForChild("bob371")
 script.Parent = Character
 
 wait(2)
@@ -115,31 +115,54 @@ function CfrAng(x,y,z,rX,rY,rZ)
 end
 
 
-
 function buildPoi(arm)
+	local _library = {}
+	
 	local _poi = Model('Poi', arm)
+	table.insert(_library,_poi)
 	
-	local _knob = Part('Knob', 'Medium stone grey', 'Plastic', 0.4, 0.4, 0.4, _poi) 
-	local _handle = Weld(arm, _knob, CfrAng(0,-1.5,0,0,0,0))
+	local _knob = Part('Knob', 'Medium stone grey', 'Plastic', 0.17, 0.17, 0.17, _poi) 
+	local _handle = Weld(arm, _knob, CfrAng(0.5,-1,0,0,0,0))
 	
-	local _ropeA = Part('Rope Top', 'Medium stone grey', 'Plastic', 0.2, 0.4, 0.2, _poi)
-	local _knobToRopeA = Weld(_knob, _ropeA, CfrAng(0,-0.4,0, 0,0,0))
+	local _ropeA = Part('RopeTop', 'Medium stone grey', 'Plastic', 0.1, 1, 0.1, _poi)
+	local _knobToRopeA = Weld(_knob, _ropeA, CfrAng(0,-0.6,0, 0,0,0))
+	local _ropeJ = Part('RopeJoint', 'Black', 'Plastic', 0.12, 0.12, 0.12, _poi) 
+	local _ropeAtoJ = Weld(_ropeA, _ropeJ, CfrAng(0,-0.4,0, 0,0,0))
 	
-	local _ropeJ = Part('Rope Joint', 'Black', 'Plastic', 0.21, 0.1, 0.21, _poi) 
-	local _ropeAtoJ = Weld(_ropeA, _ropeJ, CfrAng(0,-0.2,0, 0,0,0))
+	local _ropeB = Part('RopeBottom', 'Medium stone grey', 'Plastic', 0.1, 1, 0.1, _poi)
+	local _ropeJtoB = Weld(_ropeJ, _ropeB, CfrAng(0,-0.4,0, 0,0,0))
 	
-	local _ropeB = Part('Rope Bottom', 'Medium stone grey', 'Plastic', 0.2, 0.4, 0.2, _poi)
-	local _ropeJtoB = Weld(_ropeJ, _ropeB, CfrAng(0,-0.2,0, 0,0,0))
+	local _head = Part('Head', 'Medium stone grey', 'Plastic', 0.77, 0.77, 0.77, _poi)
+	_head.Shape = "Ball"
+	local _ropeBtoHead = Weld(_ropeB, _head, CfrAng(0,-0.6,0, 0,0,0))
 	
-	local _head = Part('Head', 'Medium stone grey', 'Plastic', 0.6, 0.6, 0.6, _poi)
-	local _ropeBtoHead = Weld(_ropeB, _head, CfrAng(0,-0.4,0, 0,0,0))
+	function _library.handleSpin(xyz)
+		if xyz == 'x' then
+			for i = 1, 4 do
+				_handle.C0 = _handle.C0 * Ang(math.pi/32.0,0,0)
+			end
+		elseif xyz == 'y' then
+			for i = 1, 4 do
+				_handle.C0 = _handle.C0 * Ang(0,math.pi/32.0,0)
+			end
+		elseif xyz == 'z' then
+			for i = 1, 4 do
+				_handle.C0 = _handle.C0 * Ang(0,0,math.pi/32.0)
+			end
+		end
+	end
 	
-	return _poi
+	return _library
 end
 
 function manipulateCharacter()
-	buildPoi(Character['LeftLowerArm'])
-	buildPoi(Character['RightLowerArm'])
+	local leftPoi = buildPoi(Character['LeftLowerArm'])
+	local rightPoi = buildPoi(Character['RightLowerArm'])
+	leftPoi.handleSpin('x')
+	while true do wait()
+		leftPoi.handleSpin('x')
+		rightPoi.handleSpin('x')
+	end
 end
 
 manipulateCharacter()
