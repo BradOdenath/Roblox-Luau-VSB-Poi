@@ -1,10 +1,10 @@
-local who = owner.Name or "BloxyKing0"
+local who = "Visualist"
 
-local Player = game.Players:WaitForChild(who)
-local Character = game.Workspace:WaitForChild(who)
+Player = game.Players:WaitForChild(who)
+Character = game.Workspace:WaitForChild(who)
 script.Parent = Character
 
-local weight = {
+weight = {
 	density = .1,
 	friction = .3,
 	elasticity = 1,
@@ -13,7 +13,7 @@ local weight = {
 }
 print(_VERSION)
 
-local function HopperBin(name, parent)
+function HopperBin(name, parent)
 	local hb = Instance.new("Tool")
 	hb.RequiresHandle = false
 	hb.CanBeDropped = false
@@ -23,7 +23,7 @@ local function HopperBin(name, parent)
 end
 
 --Part Instance (Args: 7)
-local function Part(	
+function Part(	
 	na,	--p.Name		:String
 	co,	--p.Color		:String
 	ma,	--p.Material	:MaterialType
@@ -43,7 +43,7 @@ local function Part(
 	p.Material = ma
 	p.Transparency = 0
 	p.Name = na
-	p.Massless = true
+	--p.Massless =t ru
 	p.Size = Vector3.new(sx,sy,sz)
 	p.Parent = pa
 	p.CustomPhysicalProperties = PhysicalProperties.new(weight)
@@ -51,12 +51,12 @@ local function Part(
 	return p
 end
 
-local function BallSocketConstraint(
+function BallSocketConstraint(
 	p0,	--CFrame for Part0
 	p1, --CFrame for Part1
 	cf	--CFrame for C0
 	)
-	
+	--[[
 	local w = Instance.new("BallSocketConstraint")
 	local a1, a2 = Instance.new("Attachment"), Instance.new("Attachment")
 	a1.Parent = p0
@@ -68,27 +68,27 @@ local function BallSocketConstraint(
 	w.LimitsEnabled = true
 	w.TwistLimitsEnabled = true
 	return a1
-	
-	--[[local w = Instance.new("Weld")
+	]]
+	local w = Instance.new("Weld")
 	w.Parent = p1
 	w.Part0 = p0
 	w.Part1 = p1
 	w.C0 = cf
-	return w]]
+	return w
 end
 
 --Light Instance (Args: 1)
-local function Light(
+function Light(
 	pa	--l.Parent	:Object
 	)
 	local l = Instance.new("PointLight")
-	l.Range = 16
+	l.Range = 32
 	l.Parent = pa
 	return l
 end
 
 --Mesh Instance (Args: 5)
-local function Mesh(
+function Mesh(
 	mi, --m.Object	:Object<Mesh>
 	sx, --m.Scale.x	:Decimal
 	sy, --m.Scale.y	:Decimal
@@ -102,7 +102,7 @@ local function Mesh(
 end
 
 --Model Instance (Args: 2)
-local function Model(
+function Model(
 	na,	--m.Name	:String 
 	pa	--m.Parent	:Object
 	)
@@ -112,7 +112,7 @@ local function Model(
 	return m
 end
 
-local function Fire(
+function Fire(
 	he,	--f.Heat	:Integer
 	si,	--f.Size	:Integer
 	pa	--f.Parent	:Object
@@ -125,34 +125,24 @@ local function Fire(
 end
 
 
-local function Cfr(x,y,z)
+function Cfr(x,y,z)
 	return CFrame.new(x,y,z)
 end
 
 --CFrame.Angles
-local function Ang(rX,rY,rZ)
+function Ang(rX,rY,rZ)
 	return CFrame.Angles(rX,rY,rZ)
 end
 
 --Cframe.new * CFrame.Angles
-local function CfrAng(x,y,z,rX,rY,rZ)
+function CfrAng(x,y,z,rX,rY,rZ)
 	return Cfr(x,y,z) * Ang(rX,rY,rZ)
 end
 
-local function BuildPois(hit)
-	if (hit.parent ~= Character and hit.Parent:FindFirstChild("HumanoidRootPart") ~= nil) then
-		local _Character = hit.Parent
-		pcall(function() ArmRotation(_Character["LeftUpperArm"]) end)
-		pcall(function() ArmRotation(_Character["RightUpperArm"]) end)
-		pcall(function() ArmRotation(_Character["Left Arm"]) end)
-		pcall(function() ArmRotation(_Character["Right Arm"]) end)
-	end
-end
 
-local function _buildPoi(arm)
-	arm.Massless = true
+function buildPoi(arm)
 	local asd = -0.2
-	if (string.find(arm.Name,"Hand") == nil and string.find(arm.Name,'Foot') == nil) then asd = -1.2 end
+	if (string.find(arm.Name,"Hand") == nil) then asd = -1 end
 	local _library = {}
 	
 	local _poi = Model('Poi', arm)
@@ -186,20 +176,14 @@ local function _buildPoi(arm)
 	
 	local _head = Part('Head', 'Bright orange', 'Neon', 0.77, 0.77, 0.77, _poi)
 	_head.Shape = "Ball"
-	--_head.CanCollide = true
+	_head.CanCollide = true
 	local _light = Light(_head)
 	_light.Color = _head.Color
 	_light.Brightness = 10
-	local _fire = Fire(1,2,_head)
-	_fire.Color = _head.Color
+	Fire(2,4,_head)
 	local _ropeBtoHead = BallSocketConstraint(_ropeC, _head, CfrAng(0,-0.6,0, 0,0,0))
 	
 	return _library
-end
-
-local function buildPoi(Arm)
-	return _buildPoi(Arm)
-	
 end
 
 function manipulateCharacter()
@@ -208,7 +192,7 @@ function manipulateCharacter()
 	
 	local ArmRotation = function(Arm)
 		coroutine.resume(coroutine.create(function()
-			local angl = math.pi/22
+			local angl = math.pi/8
 			local w = Instance.new("Weld")
 			w.Parent = Character.HumanoidRootPart
 			w.Part0 = Arm
@@ -233,15 +217,8 @@ function manipulateCharacter()
 					w.C1 = CFrame.new(0,0.5,0)
 				end
 			end
-			
-			for i = 1,11 do wait()
+			while true do wait() 
 				w.C1 = w.C1 * CFrame.Angles(angl,0,0)
-			end
-			while true do 
-				angl = -angl
-				for i = 1,22 do wait()
-					w.C1 = w.C1 * CFrame.Angles(angl,0,0)
-				end
 			end
 		end))
 	end
@@ -250,8 +227,8 @@ function manipulateCharacter()
 	pcall(function() ArmRotation(Character["Left Arm"]) end)
 	pcall(function() ArmRotation(Character["Right Arm"]) end)
 	
-	
-	--[[local position = Instance.new("BodyPosition",Character.HumanoidRootPart)
+--[[	
+	local position = Instance.new("BodyPosition",Character.HumanoidRootPart)
 
 	local position_person = function() 
 		position.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
@@ -262,16 +239,12 @@ function manipulateCharacter()
 		position.MaxForce = Vector3.new(0,0,0)
 	end
 
-	position_person()]]
+	position_person()
 	
-	--[[wait(2)
+	wait(2)
 		
-	buildPoi(Character:FindFirstChild('LeftFoot'))
-	buildPoi(Character:FindFirstChild('RightFoot'))
-	
-	wait(10)
-	
-	deposition_person()]]
+	buildPoi(Character['LeftFoot'])
+	buildPoi(Character['RightFoot'])]]
 	
 end
 
