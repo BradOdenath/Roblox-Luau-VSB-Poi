@@ -2,6 +2,13 @@ Player = game.Players:WaitForChild("Visualist")
 Character = game.Workspace:WaitForChild("Visualist")
 script.Parent = Character
 
+weight = {
+	density = .3,
+	friction = .3,
+	elasticity = 1,
+	frictionWeight = 1,
+	elasticityWeight = 1
+}
 wait(2)
 print(_VERSION)
 
@@ -33,9 +40,13 @@ function Part(
 	p.CanCollide = false
 	p.BrickColor = BrickColor.new(co)
 	p.Material = ma
+	p.Transparency = 0
 	p.Name = na
+	--p.Massless =t ru
 	p.Size = Vector3.new(sx,sy,sz)
 	p.Parent = pa
+	p.CustomPhysicalProperties = PhysicalProperties.new(weight)
+	p:SetNetworkOwner(Player)
 	return p
 end
 
@@ -44,6 +55,7 @@ function BallSocketConstraint(
 	p1, --CFrame for Part1
 	cf	--CFrame for C0
 	)
+	--[[
 	local w = Instance.new("BallSocketConstraint")
 	local a1, a2 = Instance.new("Attachment"), Instance.new("Attachment")
 	a1.Parent = p0
@@ -54,12 +66,14 @@ function BallSocketConstraint(
 	a1.CFrame = cf
 	w.LimitsEnabled = true
 	w.TwistLimitsEnabled = true
-	
-	--[[w.Parent = p1
+	return a1
+	]]
+	local w = Instance.new("Weld")
+	w.Parent = p1
 	w.Part0 = p0
 	w.Part1 = p1
-	w.C0 = cf]]
-	return a1
+	w.C0 = cf
+	return w
 end
 
 --Light Instance (Args: 1)
@@ -131,42 +145,40 @@ function buildPoi(arm)
 	local _poi = Model('Poi', arm)
 	table.insert(_library,_poi)
 	
-	local _knob = Part('Knob', 'Medium stone grey', 'Plastic', 0.17, 0.17, 0.17, _poi) 
+	local _knob = Part('Knob', 'Institutional white', 'Plastic', 0.17, 0.17, 0.17, _poi) 
+	local _mesh = Instance.new("SpecialMesh",_knob)
 	local _handle = BallSocketConstraint(arm, _knob, CfrAng(0,-0.2,0,0,0,0))
 	
-	local _ropeA = Part('RopeTop', 'Medium stone grey', 'Plastic', 0.1, 0.5, 0.1, _poi)
+	local _ropeA = Part('RopeTop', 'Really black', 'Plastic', 0.1, 0.5, 0.1, _poi)
+	local _mesh = Instance.new("SpecialMesh",_ropeA)
 	local _knobToRopeA = BallSocketConstraint(_knob, _ropeA, CfrAng(0,-0.3,0, 0,0,0))
-	local _ropeJ = Part('RopeJoint', 'Black', 'Plastic', 0.12, 0.12, 0.12, _poi) 
+	local _ropeJ = Part('RopeJoint', 'Really black', 'Plastic', 0.12, 0.12, 0.12, _poi) 
+	local _mesh = Instance.new("SpecialMesh",_ropeJ)
+	_mesh.MeshType = "Sphere"
+	--_ropeJ.Transparency = 1
 	local _ropeAtoJ = BallSocketConstraint(_ropeA, _ropeJ, CfrAng(0,-0.2,0, 0,0,0))
 	
-	local _ropeB = Part('RopeBottom', 'Medium stone grey', 'Plastic', 0.1, 0.5, 0.1, _poi)
+	local _ropeB = Part('RopeBottom', 'Really black', 'Plastic', 0.1, 0.5, 0.1, _poi)
+	local _mesh = Instance.new("SpecialMesh",_ropeB)
 	local _ropeJtoB = BallSocketConstraint(_ropeJ, _ropeB, CfrAng(0,-0.2,0, 0,0,0))
 	--[[
 	local _ropeJ = Part('RopeJoint', 'Black', 'Plastic', 0.12, 0.12, 0.12, _poi) 
+	local _mesh = Instance.new("SpecialMesh",_ropeJ)
+	_mesh.MeshType = "Sphere"
 	local _ropeAtoJ = BallSocketConstraint(_ropeB, _ropeJ, CfrAng(0,-0.2,0, 0,0,0))
 	
 	local _ropeC = Part('RopeCottom', 'Medium stone grey', 'Plastic', 0.1, 0.5, 0.1, _poi)
+	local _mesh = Instance.new("SpecialMesh",_ropeC)
 	local _ropeJtoC = BallSocketConstraint(_ropeJ, _ropeC, CfrAng(0,-0.2,0, 0,0,0))
 	]]
-	local _head = Part('Head', 'Medium stone grey', 'Plastic', 0.77, 0.77, 0.77, _poi)
+	local _head = Part('Head', 'Bright orange', 'Neon', 0.77, 0.77, 0.77, _poi)
 	_head.Shape = "Ball"
+	_head.CanCollide = true
+	local _light = Light(_head)
+	_light.Color = _head.Color
+	_light.Brightness = 10
+	Fire(1,2,_head)
 	local _ropeBtoHead = BallSocketConstraint(_ropeB, _head, CfrAng(0,-0.6,0, 0,0,0))
-	
-	function _library.handleSpin(xyz)
-		if xyz == 'x' then
-			for i = 1, 4 do
-				--_handle.a1 = _handle.a1 * Ang(math.pi/32.0,0,0)
-			end
-		elseif xyz == 'y' then
-			for i = 1, 4 do
-				--_handle.a1 = _handle.a1 * Ang(0,math.pi/32.0,0)
-			end
-		elseif xyz == 'z' then
-			for i = 1, 4 do
-				--_handle.a1 = _handle.a1 * Ang(0,0,math.pi/32.0)
-			end
-		end
-	end
 	
 	return _library
 end
@@ -174,11 +186,63 @@ end
 function manipulateCharacter()
 	local leftPoi = buildPoi(Character['LeftHand'])
 	local rightPoi = buildPoi(Character['RightHand'])
-	leftPoi.handleSpin('x')
-	--[[while true do wait()
-		leftPoi.handleSpin('x')
-		rightPoi.handleSpin('x')
-	end]]
+	
+	local ArmRotation = function(Arm)
+		coroutine.resume(coroutine.create(function()
+			local angl = math.pi/8
+			local w = Instance.new("Weld")
+			w.Parent = Character.HumanoidRootPart
+			w.Part0 = Arm
+			if (string.find(Arm.Name, "Upper") ~= nil) then
+				w.Part1 = Character.UpperTorso
+				if (string.find(Arm.Name, "Left") ~= nil) then
+					w.C0 = CFrame.new(-1.5,0,0)
+					w.C1 = CFrame.new(0,0.5,0)
+					angl = -angl
+				else
+					w.C0 = CFrame.new(1.5,0,0)
+					w.C1 = CFrame.new(0,0.5,0)
+				end
+			else
+				w.Part1 = Character.Torso
+				if (string.find(Arm.Name, "Left") ~= nil) then
+					w.C0 = CFrame.new(-1.5,-1,0)
+					w.C1 = CFrame.new(0,1,0)
+					angl = -angl
+				else
+					w.C0 = CFrame.new(1.5,-1,0)
+					w.C1 = CFrame.new(0,1,0)
+				end
+			end
+			while true do wait() 
+				w.C1 = w.C1 * CFrame.Angles(angl,0,0)
+			end
+		end))
+	end
+	pcall(function() ArmRotation(Character["LeftUpperArm"]) end)
+	pcall(function() ArmRotation(Character["RightUpperArm"]) end)
+	pcall(function() ArmRotation(Character["Left Arm"]) end)
+	pcall(function() ArmRotation(Character["Right Arm"]) end)
+	
+--[[	
+	local position = Instance.new("BodyPosition",Character.HumanoidRootPart)
+
+	local position_person = function() 
+		position.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+		position.Position = Character.HumanoidRootPart.Position + Vector3.new(0,10,0)
+	end
+	
+	local deposition_person = function()
+		position.MaxForce = Vector3.new(0,0,0)
+	end
+
+	position_person()
+	
+	wait(2)
+		
+	buildPoi(Character['LeftFoot'])
+	buildPoi(Character['RightFoot'])]]
+	
 end
 
 manipulateCharacter()
