@@ -5,22 +5,13 @@ Character = game.Workspace:WaitForChild(who)
 script.Parent = Character
 
 weight = {
-	density = .1,
+	density = 0,
 	friction = .3,
 	elasticity = 1,
 	frictionWeight = 1,
 	elasticityWeight = 1
 }
 print(_VERSION)
-
-function HopperBin(name, parent)
-	local hb = Instance.new("Tool")
-	hb.RequiresHandle = false
-	hb.CanBeDropped = false
-	hb.Name = name
-	hb.Parent = parent
-	return hb
-end
 
 --Part Instance (Args: 7)
 function Part(	
@@ -46,7 +37,7 @@ function Part(
 	p.Massless = true
 	p.Size = Vector3.new(sx,sy,sz)
 	p.Parent = pa
-	p.CustomPhysicalProperties = PhysicalProperties.new(weight)
+	--p.CustomPhysicalProperties = PhysicalProperties.new(weight)
 	p:SetNetworkOwner(Player)
 	return p
 end
@@ -142,7 +133,7 @@ end
 
 function buildPoi(arm)
 	arm.Massless = true
-	local asd = -0.2
+	local asd = -0.3
 	if (string.find(arm.Name,"Hand") == nil) then asd = -1 end
 	local _library = {}
 	
