@@ -1,4 +1,4 @@
-local who = "Visualist"
+local who = owner.Name or "Visualist"
 
 Player = game.Players:WaitForChild(who)
 Character = game.Workspace:WaitForChild(who)
@@ -82,7 +82,7 @@ function Light(
 	pa	--l.Parent	:Object
 	)
 	local l = Instance.new("PointLight")
-	l.Range = 32
+	l.Range = 16
 	l.Parent = pa
 	return l
 end
@@ -174,14 +174,13 @@ function buildPoi(arm)
 	local _mesh = Instance.new("SpecialMesh",_ropeC)
 	local _ropeJtoC = BallSocketConstraint(_ropeJ, _ropeC, CfrAng(0,-0.2,0, 0,0,0))
 	
-	local _head = Part('Head', 'Bright orange', 'Neon', 0.77, 0.77, 0.77, _poi)
+	local _head = Part('Head', 'Really black', 'Neon', 0.5, 0.5, 0.5, _poi)
 	_head.Shape = "Ball"
 	_head.CanCollide = true
 	local _light = Light(_head)
-	_light.Color = _head.Color
-	_light.Brightness = 10
+	_light.Brightness = 1
 	Fire(2,4,_head)
-	local _ropeBtoHead = BallSocketConstraint(_ropeC, _head, CfrAng(0,-0.6,0, 0,0,0))
+	local _ropeBtoHead = BallSocketConstraint(_ropeC, _head, CfrAng(0,-0.4,0, 0,0,0))
 	
 	return _library
 end
@@ -192,7 +191,7 @@ function manipulateCharacter()
 	
 	local ArmRotation = function(Arm)
 		coroutine.resume(coroutine.create(function()
-			local angl = math.pi/8
+			local angl = math.pi/12
 			local w = Instance.new("Weld")
 			w.Parent = Character.HumanoidRootPart
 			w.Part0 = Arm
