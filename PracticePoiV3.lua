@@ -182,6 +182,10 @@ function buildPoi(arm, col)
 	_light.Brightness = 0.1
 	Fire(2,4,_head)]]
 	
+	local _anti = Instance.new("BodyForce")
+	_anti.Parent = _head
+	_anti.Force = Vector3.new(0,_head:GetMass() * workspace.Gravity, 0)
+	
 	local attachment0 = Instance.new("Attachment")
 	attachment0.Parent = _knob
 	local attachment1 = Instance.new("Attachment")
