@@ -4,6 +4,8 @@ Player = game.Players:WaitForChild(who)
 Character = game.Workspace:WaitForChild(who)
 script.Parent = Character
 
+fir = false
+
 weight = {
 	density = .1,
 	friction = .3,
@@ -178,9 +180,12 @@ function buildPoi(arm, col)
 	local _head = Part('Head', col, 'SmoothPlastic', 0.5, 0.5, 0.5, _poi)
 	_head.Shape = "Ball"
 	_head.CanCollide = true
-	--[[local _light = Light(_head)
-	_light.Brightness = 0.1
-	Fire(2,4,_head)]]
+	if fir then
+		_head.BrickColor = BrickColor.new("Really black")
+		local _light = Light(_head)
+		_light.Brightness = 1
+		Fire(2,4,_head)
+	end
 	
 	local _anti = Instance.new("BodyForce")
 	_anti.Parent = _head
@@ -203,15 +208,24 @@ function buildPoi(arm, col)
 	_rope.Visible = true
 	
 	--[[local _ropeBtoHead = BallSocketConstraint(_ropeC, _head, CfrAng(0,-0.4,0, 0,0,0))]]
-	
+	wait()
 	return _library
 end
 
 function manipulateCharacter()
-	local leftPoi = buildPoi(Character:FindFirstChild('LeftHand') or Character:FindFirstChild("Left Arm"), "Neon orange")
-	local leftPoi = buildPoi(Character:FindFirstChild('LeftHand') or Character:FindFirstChild("Left Arm"), "Bright green")
-	local rightPoi = buildPoi(Character:FindFirstChild('RightHand') or Character:FindFirstChild("Right Arm"), "Lapis")
-	
+
+	for i = 1,1 do
+		
+		--local leftPoiA = buildPoi(Character:FindFirstChild('LeftHand') or Character:FindFirstChild("Left Arm"), "Neon orange")
+		local leftPoiB = buildPoi(Character:FindFirstChild('LeftHand') or Character:FindFirstChild("Left Arm"), "Bright green")
+		local leftPoiC = buildPoi(Character:FindFirstChild('LeftHand') or Character:FindFirstChild("Left Arm"), "Lapis")
+		--local leftPoiD = buildPoi(Character:FindFirstChild('LeftHand') or Character:FindFirstChild("Left Arm"), "Institutional white")
+		
+		local rightPoiA = buildPoi(Character:FindFirstChild('RightHand') or Character:FindFirstChild("Right Arm"), "Neon orange")
+		--local rightPoiB = buildPoi(Character:FindFirstChild('RightHand') or Character:FindFirstChild("Right Arm"), "Bright green")
+		--local rightPoiC = buildPoi(Character:FindFirstChild('RightHand') or Character:FindFirstChild("Right Arm"), "Lapis")
+		--local rightPoiC = buildPoi(Character:FindFirstChild('RightHand') or Character:FindFirstChild("Right Arm"), "Insititutional white")
+	end
 	local ArmRotation = function(Arm)
 		coroutine.resume(coroutine.create(function()
 			local angl = math.pi/32
@@ -260,12 +274,11 @@ function manipulateCharacter()
 	pcall(function() ArmRotation(Character["Left Arm"]) end)
 	pcall(function() ArmRotation(Character["Right Arm"]) end)
 	
---[[	
-	local position = Instance.new("BodyPosition",Character.HumanoidRootPart)
+	--[[local position = Instance.new("BodyPosition",Character.HumanoidRootPart)
 
 	local position_person = function() 
 		position.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
-		position.Position = Character.HumanoidRootPart.Position + Vector3.new(0,10,0)
+		position.Position = Character.HumanoidRootPart.Position + Vector3.new(0,1,0)
 	end
 	
 	local deposition_person = function()
@@ -273,12 +286,13 @@ function manipulateCharacter()
 	end
 
 	position_person()
-	
-	wait(2)
-		
-	buildPoi(Character['LeftFoot'])
-	buildPoi(Character['RightFoot'])]]
-	
+	]]
 end
 
 manipulateCharacter()
+
+for i,v in pairs(workspace:GetDescendants()) do
+	if v:IsA("BasePart") then
+	
+	end
+end
