@@ -42,24 +42,24 @@ function Part(
 	p.TopSurface = 0
 	p.BottomSurface = 0
 	p.CanCollide = false
-	p.BrickColor = BrickColor.new(co)
-	p.Material = ma
+	pcall(function() p.BrickColor = BrickColor.new(co) end)
+	--pcall(function() p.BrickColor = co end)
+	--pcall(function() p.Color = Color3.fromRGB(co) end)
+	--pcall(function() p.Color = co end)
+	p.Material = 'SmoothPlastic'
 	p.Transparency = 0
+	p.Reflectance = 0.03
 	p.Name = na
 	--p.Massless =t ru
 	p.Size = Vector3.new(sx,sy,sz)
 	p.Parent = pa
+	p.CFrame = Character.HumanoidRootPart.CFrame + Vector3.new(0,5,0)
 	p.CustomPhysicalProperties = PhysicalProperties.new(weight)
 	p:SetNetworkOwner(Player)
 	return p
 end
 
-function BallSocketConstraint(
-	p0,	--CFrame for Part0
-	p1, --CFrame for Part1
-	cf	--CFrame for C0
-	)
-	--[[
+function BallSocketConstraint(p0,p1,cf)
 	local w = Instance.new("BallSocketConstraint")
 	local a1, a2 = Instance.new("Attachment"), Instance.new("Attachment")
 	a1.Parent = p0
@@ -71,7 +71,14 @@ function BallSocketConstraint(
 	w.LimitsEnabled = true
 	w.TwistLimitsEnabled = true
 	return a1
-	]]
+	
+end
+
+function Weld(
+	p0,	--CFrame for Part0
+	p1, --CFrame for Part1
+	cf	--CFrame for C0
+	)
 	local w = Instance.new("Weld")
 	w.Parent = p1
 	w.Part0 = p0
@@ -177,40 +184,42 @@ local trailPart = function(_part)
 end
 
 
-function buildPoi(arm, col)
+function buildPoi(arm, col, col_rope, col_knob)
 	local asd = -0.2
 	if (string.find(arm.Name,"Hand") == nil) then asd = -1 end
 	local _library = {}
 	
-	local _poi = Model('Poi', arm)
+	local _poi = Model('Poi', workspace--[[arm]])
 	table.insert(_library,_poi)
 	
-	local _knob = Part('Knob', 'Institutional white', 'Fabric', 0.17, 0.17, 0.17, _poi) 
+	local _knob = Part('Knob', col_knob, 'Fabric', 0.17, 0.17, 0.17, _poi) 
+	if (fir) then _knob.BrickColor = BrickColor.new("Insititutional white")
+	_knob.Transparency = 0.1 end
 	local _mesh = Instance.new("SpecialMesh",_knob)
 	
 	local _handle = BallSocketConstraint(arm, _knob, CfrAng(0,asd,0,0,0,0))
 	
 	--[[local _ropeA = Part('RopeTop', 'Really black', 'Plastic', 0.1, 0.5, 0.1, _poi)
 	local _mesh = Instance.new("SpecialMesh",_ropeA)
-	local _knobToRopeA = BallSocketConstraint(_knob, _ropeA, CfrAng(0,-0.3,0, 0,0,0))
+	local _knobToRopeA = Weld(_knob, _ropeA, CfrAng(0,-0.3,0, 0,0,0))
 	local _ropeJ = Part('RopeJoint', 'Really black', 'Plastic', 0.12, 0.12, 0.12, _poi) 
 	local _mesh = Instance.new("SpecialMesh",_ropeJ)
 	_mesh.MeshType = "Sphere"
 	--_ropeJ.Transparency = 1
-	local _ropeAtoJ = BallSocketConstraint(_ropeA, _ropeJ, CfrAng(0,-0.2,0, 0,0,0))
+	local _ropeAtoJ = Weld(_ropeA, _ropeJ, CfrAng(0,-0.2,0, 0,0,0))
 	
 	local _ropeB = Part('RopeBottom', 'Really black', 'Plastic', 0.1, 0.5, 0.1, _poi)
 	local _mesh = Instance.new("SpecialMesh",_ropeB)
-	local _ropeJtoB = BallSocketConstraint(_ropeJ, _ropeB, CfrAng(0,-0.2,0, 0,0,0))
+	local _ropeJtoB = Weld(_ropeJ, _ropeB, CfrAng(0,-0.2,0, 0,0,0))
 	
 	local _ropeJ = Part('RopeJoint', 'Really black', 'Plastic', 0.12, 0.12, 0.12, _poi) 
 	local _mesh = Instance.new("SpecialMesh",_ropeJ)
 	_mesh.MeshType = "Sphere"
-	local _ropeAtoJ = BallSocketConstraint(_ropeB, _ropeJ, CfrAng(0,-0.2,0, 0,0,0))
+	local _ropeAtoJ = Weld(_ropeB, _ropeJ, CfrAng(0,-0.2,0, 0,0,0))
 	
 	local _ropeC = Part('RopeCottom', 'Really black', 'Plastic', 0.1, 0.5, 0.1, _poi)
 	local _mesh = Instance.new("SpecialMesh",_ropeC)
-	local _ropeJtoC = BallSocketConstraint(_ropeJ, _ropeC, CfrAng(0,-0.2,0, 0,0,0))]]
+	local _ropeJtoC = Weld(_ropeJ, _ropeC, CfrAng(0,-0.2,0, 0,0,0))]]
 	
 	local _headRope = function(_attachment,_cc)		
 		local _head = Part('Head', col, 'SmoothPlastic', 0.5, 0.5, 0.5, _poi)
@@ -218,8 +227,8 @@ function buildPoi(arm, col)
 		_head.CanCollide = _cc
 		--trailPart(_head)
 		
-		local _light = Light(_head)
-		_light.Brightness = 1
+		--local _light = Light(_head)
+		--_light.Brightness = 1
 		
 		--local _spark
 		if fir then
@@ -234,10 +243,11 @@ function buildPoi(arm, col)
 	
 		local _rope = Instance.new("RopeConstraint")
 		_rope.Parent = _head
-		_rope.Length = 1.5
+		_rope.Length = 1.8
 		_rope.Attachment0 = _attachment
 		_rope.Attachment1 = attachment1
-		_rope.Color = BrickColor.new("Sand yellow metallic")
+		if fir then _rope.Color = BrickColor.new("Sand yellow metallic") else
+		_rope.Color = BrickColor.new(col_rope) end
 		_rope.Thickness = 0.1
 		_rope.Restitution = 0
 		_rope.Visible = true
@@ -255,7 +265,7 @@ function buildPoi(arm, col)
 	local _last
 	for i = 1,1 do wait()
 		if (_last) then
-			local _head = _headRope(_last,false)
+			local _head = _headRope(_last,true)
 			_last = _head
 		else
 			_last = _headRope(attachment0,true)
@@ -277,35 +287,41 @@ function buildPoi(arm, col)
 
 
 	
-	--[[local _ropeBtoHead = BallSocketConstraint(_ropeC, _head, CfrAng(0,-0.4,0, 0,0,0))]]
+	--[[local _ropeBtoHead = Weld(_ropeC, _head, CfrAng(0,-0.4,0, 0,0,0))]]
 	wait()
 	return _library
 end
 
-function manipulateCharacter()
-	local leftPoiA = buildPoi(Character:FindFirstChild('LeftHand') or Character:FindFirstChild("Left Arm"), "Really red")
-	local rightPoiA = buildPoi(Character:FindFirstChild('RightHand') or Character:FindFirstChild("Right Arm"), "Really red")
+local PoiColors = {
+	{"Neon orange", "Lime green", "Lapis"},
+	{"Bright green", "Lapis", "Neon orange"},
+}
+
+function manipulateCharacter(_Character)
+	--local leftPoiA = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Toothpaste")
+	--local rightPoiA = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Toothpaste")
 		
 	for i = 1,1 do
 		
-		--local leftPoiA = buildPoi(Character:FindFirstChild('LeftHand') or Character:FindFirstChild("Left Arm"), "Neon orange")
-		--local leftPoiB = buildPoi(Character:FindFirstChild('LeftHand') or Character:FindFirstChild("Left Arm"), "Bright green")
-		--local leftPoiC = buildPoi(Character:FindFirstChild('LeftHand') or Character:FindFirstChild("Left Arm"), "Lapis")
-		--local leftPoiD = buildPoi(Character:FindFirstChild('LeftHand') or Character:FindFirstChild("Left Arm"), "Institutional white")
+		local leftPoiA = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Neon orange", "Neon green", "Lapis")
+		local leftPoiB = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Bright green", "Lapis", "Neon orange")
+		local leftPoiC = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Lapis", "Neon orange", "Bright green")
+		local leftPoiD = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Institutional white", "Really red", "Bright green")
 		
-		--local rightPoiA = buildPoi(Character:FindFirstChild('RightHand') or Character:FindFirstChild("Right Arm"), "Neon orange")
-		--local rightPoiB = buildPoi(Character:FindFirstChild('RightHand') or Character:FindFirstChild("Right Arm"), "Bright green")
-		--local rightPoiC = buildPoi(Character:FindFirstChild('RightHand') or Character:FindFirstChild("Right Arm"), "Lapis")
-		--local rightPoiC = buildPoi(Character:FindFirstChild('RightHand') or Character:FindFirstChild("Right Arm"), "Insititutional white")
+		local rightPoiA = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Neon orange", "Neon green", "Lapis")
+		local rightPoiB = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Bright green", "Lapis", "Neon orange")
+		local rightPoiC = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Lapis", "Neon orange", "Bright green")
+		local rightPoiD = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Institutional white", "Really red", "Bright green")
+		
 	end
 	local ArmRotation = function(Arm)
 		coroutine.resume(coroutine.create(function()
 			local angl = math.pi/32
 			local w = Instance.new("Weld")
-			w.Parent = Character.HumanoidRootPart
+			w.Parent = _Character.HumanoidRootPart
 			w.Part0 = Arm
 			if (string.find(Arm.Name, "Upper") ~= nil) then
-				w.Part1 = Character.UpperTorso
+				w.Part1 = _Character.UpperTorso
 				if (string.find(Arm.Name, "Left") ~= nil) then
 					w.C0 = CFrame.new(-1.5,0,0)
 					w.C1 = CFrame.new(0,0.5,0)
@@ -315,7 +331,7 @@ function manipulateCharacter()
 					w.C1 = CFrame.new(0,0.5,0)
 				end
 			else
-				w.Part1 = Character.Torso
+				w.Part1 = _Character.Torso
 				if (string.find(Arm.Name, "Left") ~= nil) then
 					w.C0 = CFrame.new(-1.5,0.5,0)
 					w.C1 = CFrame.new(0,0.5,0)
@@ -341,17 +357,17 @@ function manipulateCharacter()
 			end
 		end))
 	end
-	pcall(function() ArmRotation(Character["LeftUpperArm"]) end)
-	pcall(function() ArmRotation(Character["RightUpperArm"]) end)
-	pcall(function() ArmRotation(Character["Left Arm"]) end)
-	pcall(function() ArmRotation(Character["Right Arm"]) end)
+	pcall(function() ArmRotation(_Character["LeftUpperArm"]) end)
+	pcall(function() ArmRotation(_Character["RightUpperArm"]) end)
+	pcall(function() ArmRotation(_Character["Left Arm"]) end)
+	pcall(function() ArmRotation(_Character["Right Arm"]) end)
 	
 	local position = Instance.new("BodyPosition")
 
 	local position_person = function() 
-		position.Parent = Character.HumanoidRootPart
+		position.Parent = _Character.HumanoidRootPart
 		position.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
-		position.Position = Character.HumanoidRootPart.Position + Vector3.new(0,20,0)
+		position.Position = _Character.HumanoidRootPart.Position + Vector3.new(0,20,0)
 	end
 	
 	local deposition_person = function()
@@ -363,7 +379,7 @@ function manipulateCharacter()
 	
 end
 
-manipulateCharacter()
+manipulateCharacter(owner.Character)
 
 for i,v in pairs(workspace:GetDescendants()) do
 	if v:IsA("BasePart") then
