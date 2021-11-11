@@ -189,15 +189,21 @@ function buildPoi(arm, col, col_rope, col_knob)
 	if (string.find(arm.Name,"Hand") == nil) then asd = -1 end
 	local _library = {}
 	
-	local _poi = Model('Poi', workspace--[[arm]])
+	local _poi = Model('Poi', workspace)
 	table.insert(_library,_poi)
+	
+	local _
 	
 	local _knob = Part('Knob', col_knob, 'Fabric', 0.17, 0.17, 0.17, _poi) 
 	if (fir) then _knob.BrickColor = BrickColor.new("Insititutional white")
 	_knob.Transparency = 0.1 end
 	local _mesh = Instance.new("SpecialMesh",_knob)
+
+	local _handle
+	local __handle = function()
+		_handle = BallSocketConstraint(arm, _knob, CfrAng(0,asd,0,0,0,0))
+	end
 	
-	local _handle = BallSocketConstraint(arm, _knob, CfrAng(0,asd,0,0,0,0))
 	
 	--[[local _ropeA = Part('RopeTop', 'Really black', 'Plastic', 0.1, 0.5, 0.1, _poi)
 	local _mesh = Instance.new("SpecialMesh",_ropeA)
@@ -316,7 +322,7 @@ function manipulateCharacter(_Character)
 	end
 	local ArmRotation = function(Arm)
 		coroutine.resume(coroutine.create(function()
-			local angl = math.pi/32
+			local angl = math.pi/64
 			local w = Instance.new("Weld")
 			w.Parent = _Character.HumanoidRootPart
 			w.Part0 = Arm
