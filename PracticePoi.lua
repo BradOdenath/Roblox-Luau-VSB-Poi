@@ -5,7 +5,7 @@ Player = game.Players:WaitForChild(who)
 Character = game.Workspace:WaitForChild(who)
 script.Parent = Character
 
-fir = true
+fir = false
 
 weight = {
 	density = .1,
@@ -192,6 +192,28 @@ local trailPart = function(_part)
 end
 
 
+local waterBody = function()
+	local water = Instance.new("Part")
+	water.Anchored = true
+	water.CanCollide = false
+	water.Locked = true
+	water.BrickColor = BrickColor.Blue()
+	water.Size = Vector3.new(20,10,20)
+	water.CFrame = CFrame.new(30,5,30)
+	water.Transparency = 0.87654
+	water.Reflectance = 0.12345
+	water.Parent = workspace
+	water.Touched:Connect(function(h)
+		for i,v in pairs(h:GetDescendants()) do
+			if v:IsA("Fire") then
+				if v.Enabled == true then
+					v.Enabled = false
+				end
+			end
+		end
+	end)
+end
+
 function buildPoi(arm, col, col_rope, col_knob)
 	local asd = -0.2
 	if (string.find(arm.Name,"Hand") == nil) then asd = -1 end
@@ -242,9 +264,6 @@ function buildPoi(arm, col, col_rope, col_knob)
 		_head.CanCollide = _cc
 		--trailPart(_head)
 		
-		--local _light = Light(_head)
-		--_light.Brightness = 1
-		
 		local attachment1 = Instance.new("Attachment")
 		attachment1.Parent = _head
 	
@@ -261,29 +280,43 @@ function buildPoi(arm, col, col_rope, col_knob)
 		--local _spark
 		if fir then
 			_head.BrickColor = BrickColor.new("Really black")
-			Fire(2,4,_head)
+			local _fire = Fire(2,4,_head)
+			local _isBurning = _fire.Size > 0
+			local _light = Light(_head)
+			coroutine.resume(coroutine.create(function()
+				while _isBurning do
+					_fire.Size = _fire.Size - 0.001
+					_light.Brightness = _fire.Size/4.0
+					wait(1)
+				end
+			end))
+			if _isBurning then
 			_rope.Color = BrickColor.new("Sand yellow metallic")
-			_head.Touched:Connect(function(h)
-				if (h.Parent ~= Character) then
-					if (h.Parent:FindFirstChildWhichIsA("Humanoid") ~= nil) then
-						for i,v in pairs(h.Parent:GetChildren()) do
-							if (v:IsA("BasePart")) then
-								if (v:FindFirstChildWhichIsA("Fire") == nil) then
-									Fire(2,4,v)
-									coroutine.resume(coroutine.create(function()
-										wait(10)
-										if (v:FindFirstChildWhichIsA("Fire") ~= nil) then
-											v:BreakJoints()
-											wait(7)
-											v:Remove()
-										end
-									end))
+				_head.Touched:Connect(function(h)
+					if (h.Parent ~= Character) then
+						if (h.Parent:FindFirstChildWhichIsA("Humanoid") ~= nil) then
+							for i,v in pairs(h.Parent:GetChildren()) do
+								if (v:IsA("BasePart")) then
+									if (v:FindFirstChildWhichIsA("Fire") == nil) then
+										Fire(2,4,v)
+										coroutine.resume(coroutine.create(function()
+											wait(10)
+											local _fyre = v:FindFirstChildWhichIsA("Fire")
+											if (_fyre ~= nil) then
+												if (_fyre.Enabled == true) then
+													v:BreakJoints()
+													wait(7)
+													v:Remove()
+												end
+											end
+										end))
+									end
 								end
 							end
 						end
-					end
-				end
-			end)
+					end					
+				end)
+			end
 		else
 			--_spark = Instance.new("Sparkles",nil)
 		end
@@ -417,8 +450,4 @@ end
 
 manipulateCharacter(owner.Character)
 
-for i,v in pairs(workspace:GetDescendants()) do
-	if v:IsA("BasePart") then
-	
-	end
-end
+waterBody()
