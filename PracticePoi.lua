@@ -5,7 +5,7 @@ Player = game.Players:WaitForChild(who)
 Character = game.Workspace:WaitForChild(who)
 script.Parent = Character
 
-fir = false
+fir = true
 
 weight = {
 	density = .1,
@@ -157,6 +157,14 @@ local lerpPartToColor = function(part, new_color)
 	end
 end
 
+local largestSizeDimension = function(part)
+	local largest_size_dimension
+	
+	
+	
+	return largest_size_dimension
+end
+
 local trailPart = function(_part)
 	coroutine.resume(coroutine.create(function()
 		while true do wait(0.1)
@@ -199,11 +207,12 @@ function buildPoi(arm, col, col_rope, col_knob)
 	_knob.Transparency = 0.1 end
 	local _mesh = Instance.new("SpecialMesh",_knob)
 
-	local _handle
-	local __handle = function()
-		_handle = BallSocketConstraint(arm, _knob, CfrAng(0,asd,0,0,0,0))
+	local _handle = BallSocketConstraint(arm, _knob, CfrAng(0,asd,0,0,0,0))
+	--[[local __handle = function()
+		_handle = 
 	end
-	
+	_handle = __handle
+	]]
 	
 	--[[local _ropeA = Part('RopeTop', 'Really black', 'Plastic', 0.1, 0.5, 0.1, _poi)
 	local _mesh = Instance.new("SpecialMesh",_ropeA)
@@ -236,14 +245,6 @@ function buildPoi(arm, col, col_rope, col_knob)
 		--local _light = Light(_head)
 		--_light.Brightness = 1
 		
-		--local _spark
-		if fir then
-			_head.BrickColor = BrickColor.new("Really black")
-			Fire(2,4,_head)
-		else
-			--_spark = Instance.new("Sparkles",nil)
-		end
-		
 		local attachment1 = Instance.new("Attachment")
 		attachment1.Parent = _head
 	
@@ -252,11 +253,40 @@ function buildPoi(arm, col, col_rope, col_knob)
 		_rope.Length = 1.8
 		_rope.Attachment0 = _attachment
 		_rope.Attachment1 = attachment1
-		if fir then _rope.Color = BrickColor.new("Sand yellow metallic") else
-		_rope.Color = BrickColor.new(col_rope) end
+		_rope.Color = BrickColor.new(col_rope) 
 		_rope.Thickness = 0.1
 		_rope.Restitution = 0
 		_rope.Visible = true
+		
+		--local _spark
+		if fir then
+			_head.BrickColor = BrickColor.new("Really black")
+			Fire(2,4,_head)
+			_rope.Color = BrickColor.new("Sand yellow metallic")
+			_head.Touched:Connect(function(h)
+				if (h.Parent ~= Character) then
+					if (h.Parent:FindFirstChildWhichIsA("Humanoid") ~= nil) then
+						for i,v in pairs(h.Parent:GetChildren()) do
+							if (v:IsA("BasePart")) then
+								if (v:FindFirstChildWhichIsA("Fire") == nil) then
+									Fire(2,4,v)
+									coroutine.resume(coroutine.create(function()
+										wait(10)
+										if (v:FindFirstChildWhichIsA("Fire") ~= nil) then
+											v:BreakJoints()
+											wait(7)
+											v:Remove()
+										end
+									end))
+								end
+							end
+						end
+					end
+				end
+			end)
+		else
+			--_spark = Instance.new("Sparkles",nil)
+		end
 	
 		local _anti = Instance.new("BodyForce")
 		_anti.Parent = _head
@@ -309,22 +339,22 @@ function manipulateCharacter(_Character)
 		
 	for i = 1,1 do
 		
-		local leftPoiA = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Neon orange", "Neon green", "Lapis")
+		--local leftPoiA = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Neon orange", "Neon green", "Lapis")
 		local leftPoiB = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Bright green", "Lapis", "Neon orange")
-		local leftPoiC = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Lapis", "Neon orange", "Bright green")
-		local leftPoiD = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Institutional white", "Really red", "Bright green")
+		--local leftPoiC = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Lapis", "Neon orange", "Bright green")
+		--local leftPoiD = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Institutional white", "Really red", "Bright green")
 		
-		local rightPoiA = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Neon orange", "Neon green", "Lapis")
-		local rightPoiB = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Bright green", "Lapis", "Neon orange")
+		--local rightPoiA = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Neon orange", "Neon green", "Lapis")
+		--local rightPoiB = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Bright green", "Lapis", "Neon orange")
 		local rightPoiC = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Lapis", "Neon orange", "Bright green")
-		local rightPoiD = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Institutional white", "Really red", "Bright green")
+		--local rightPoiD = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Institutional white", "Really red", "Bright green")
 		
 	end
 	local ArmRotation = function(Arm)
 		coroutine.resume(coroutine.create(function()
-			local angl = math.pi/64
+			local angl = math.pi/32
 			local w = Instance.new("Weld")
-			w.Parent = _Character.HumanoidRootPart
+			w.Parent = workspace--_Character.HumanoidRootPart
 			w.Part0 = Arm
 			if (string.find(Arm.Name, "Upper") ~= nil) then
 				w.Part1 = _Character.UpperTorso
