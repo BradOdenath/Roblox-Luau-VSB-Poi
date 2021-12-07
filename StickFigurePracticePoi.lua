@@ -164,7 +164,7 @@ end
 local stickFigure = function(character)
 	local core = character:FindFirstChild("HumanoidRootPart")
 	for i,v in pairs(character:GetDescendants()) do if (v:IsA("BasePart")) then
-			if (v ~= core) then pcall(function() if (v.Name ~= "Head") then v.Transparency = 0.3 else v.BrickColor = color end end)
+			if (v ~= core) then pcall(function() if (v.Name ~= "Head") then v.Transparency = 0.9 else v.BrickColor = color end end)
 				lassoassoasso(core, v) 
 			end
 	end end
@@ -287,9 +287,9 @@ function buildPoi(arm, col, col_rope, col_knob)
 	local _ropeJtoC = Weld(_ropeJ, _ropeC, CfrAng(0,-0.2,0, 0,0,0))]]
 	
 	local _headRope = function(_attachment,_cc)		
-		local _head = Part('_Head', col, 'SmoothPlastic', 0.5, 0.5, 0.5, _poi)
+		local _head = Part('Head', col, 'SmoothPlastic', 0.5, 0.5, 0.5, _poi)
 		_head.Shape = "Ball"
-		_head.CanCollide = false or _cc
+		_head.CanCollide = _cc
 		--trailPart(_head)
 		
 		local attachment1 = Instance.new("Attachment")
@@ -402,21 +402,16 @@ function manipulateCharacter(_Character)
 		
 	for i = 1,1 do
 		
-		local leftPoiA = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Really red", "Really black", "Institutional white")
-		local leftPoiA = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Really red", "Really black", "Institutional white")
-		
-		
-		--[[
-		local leftPoiA = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Neon orange", "Neon green", "Lapis")
+		--local leftPoiA = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Neon orange", "Neon green", "Lapis")
 		local leftPoiB = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Bright green", "Lapis", "Neon orange")
-		local leftPoiC = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Lapis", "Neon orange", "Bright green")
-		local leftPoiD = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Institutional white", "Really red", "Bright green")
+		--local leftPoiC = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Lapis", "Neon orange", "Bright green")
+		--local leftPoiD = buildPoi(_Character:FindFirstChild('LeftHand') or _Character:FindFirstChild("Left Arm"), "Institutional white", "Really red", "Bright green")
 		
-		local rightPoiA = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Neon orange", "Neon green", "Lapis")
-		local rightPoiB = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Bright green", "Lapis", "Neon orange")
-		local rightPoiC = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Lapis", "Neon orange", "Bright green")
+		--local rightPoiA = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Neon orange", "Neon green", "Lapis")
+		--local rightPoiB = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Bright green", "Lapis", "Neon orange")
+		--local rightPoiC = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Lapis", "Neon orange", "Bright green")
 		local rightPoiD = buildPoi(_Character:FindFirstChild('RightHand') or _Character:FindFirstChild("Right Arm"), "Institutional white", "Really red", "Bright green")
-		]]
+		
 	end
 	local ArmRotation = function(Arm)
 		coroutine.resume(coroutine.create(function()

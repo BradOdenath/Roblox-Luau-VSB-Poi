@@ -15,7 +15,7 @@ print(_VERSION)
 
 function HopperBin(name, parent)
 	local hb = Instance.new("Tool")
-	hb.RequiresHandle = false
+	hb.RequiresHandle  = false
 	hb.CanBeDropped = false
 	hb.Name = name
 	hb.Parent = parent
